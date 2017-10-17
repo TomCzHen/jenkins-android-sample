@@ -2,25 +2,24 @@ pipeline {
   agent none
   stages {
     stage('Initialize') {
-      agent {
-        docker {
-          image 'hello-world'
-        }
-        
-      }
       steps {
         sh 'echo "Initialize"'
+        echo 'Initialize'
       }
     }
     stage('Build') {
-      agent {
-        docker {
-          image 'hello-world'
-        }
-        
-      }
       steps {
         echo 'Build'
+      }
+    }
+    stage('Upload') {
+      steps {
+        echo 'Upload'
+      }
+    }
+    stage('Report') {
+      steps {
+        echo 'Report'
       }
     }
   }
