@@ -2,6 +2,12 @@ pipeline {
   agent any
   stages {
     stage('Initialize') {
+      agent {
+        docker {
+          image 'hello-world'
+        }
+        
+      }
       steps {
         sh 'echo "Initialize"'
         echo 'Initialize'
