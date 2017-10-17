@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">我的第一个应用</string>
+    <string name="button_send">发送</string>
+    <string name="edit_message">输入一段信息</string>
+</resources>
