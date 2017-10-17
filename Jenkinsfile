@@ -1,15 +1,12 @@
 pipeline {
   agent any
+  parameters {
+    string(name: 'PERSON', defaultValue: 'Mr Jenkins', description: 'Who should I say hello to?')
+  }
   stages {
     stage('Initialize') {
-      agent {
-        docker {
-          image 'busybox'
-        }
-        
-      }
       steps {
-        echo 'Initialize'
+        echo "Initialize ${params.PERSON}"
       }
     }
     stage('Build') {
