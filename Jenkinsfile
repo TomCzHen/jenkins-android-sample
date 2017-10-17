@@ -4,12 +4,11 @@ pipeline {
     stage('Initialize') {
       agent {
         docker {
-          image 'hello-world'
+          image 'busybox'
         }
         
       }
       steps {
-        sh 'echo "Initialize"'
         echo 'Initialize'
       }
     }
