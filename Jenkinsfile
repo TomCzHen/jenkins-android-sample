@@ -7,6 +7,8 @@ pipeline {
     stage('Initialize') {
       steps {
         echo "Initialize ${params.PERSON}"
+        input message: 'Ready to go?', parameters: [choice(choices: ['dev', 'prod'], description: '', name: 'branch')]
+        echo "${choice}"
       }
     }
     stage('Build') {
