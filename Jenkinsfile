@@ -1,5 +1,10 @@
 pipeline {
-  agent any
+  agent {
+    docker {
+      image 'hello-world'
+    }
+    
+  }
   stages {
     stage('Initialize') {
       steps {
@@ -7,6 +12,12 @@ pipeline {
       }
     }
     stage('Build') {
+      agent {
+        docker {
+          image 'hello-world'
+        }
+        
+      }
       steps {
         echo 'Build'
       }
