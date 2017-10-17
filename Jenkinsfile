@@ -1,12 +1,13 @@
 pipeline {
-  agent {
-    docker {
-      image 'hello-world'
-    }
-    
-  }
+  agent none
   stages {
     stage('Initialize') {
+      agent {
+        docker {
+          image 'hello-world'
+        }
+        
+      }
       steps {
         sh 'echo "Initialize"'
       }
