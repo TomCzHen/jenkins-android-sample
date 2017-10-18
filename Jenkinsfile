@@ -1,7 +1,7 @@
 pipeline {
     agent any
     parameters {
-        input message: 'this is a message', parameters: [choice(choices: ['dev', 'prod'], description: '', name: 'branch')]
+        choice(choices: ['dev', 'prod'], description: '', name: 'branch')
     }
     stages {
         stage('Initialize') {
