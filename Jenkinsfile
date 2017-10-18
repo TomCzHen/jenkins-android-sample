@@ -2,7 +2,7 @@ pipeline {
   agent any
   parameters {
     string(name: 'PERSON', defaultValue: 'Mr Jenkins', description: 'Who should I say hello to?')
-    choice(choices: 'prod/dev', description: '', name: 'BRANCH')
+    choice(choices: 'prod\ndev', description: '', name: 'BRANCH')
   }
   stages {
     stage('Initialize') {
