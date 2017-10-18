@@ -6,7 +6,7 @@ pipeline {
                 description: 'Who should I say hello to?')
         choice(name: 'BRANCH',
                 choices: 'prod\ndev',
-                description: '')
+                description: 'Choice Branch')
         booleanParam(name: 'CAN_DANCE',
                 defaultValue: true,
                 description: 'Checkbox parameter')
