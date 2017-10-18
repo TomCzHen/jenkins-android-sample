@@ -1,12 +1,13 @@
 pipeline {
   agent any
   parameters {
-    choice(choices: 'dev|prod', description: '', name: 'branch')
+    string(name: 'PERSON', defaultValue: 'Mr Jenkins', description: 'Who should I say hello to?')
+    choice(choices: 'prod', description: '', name: 'branch')
   }
   stages {
     stage('Initialize') {
       steps {
-        echo "Initialize ${params.branch}"
+        echo 'Initialize ${params.PERSON}'
       }
     }
     stage('Build') {
