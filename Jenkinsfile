@@ -14,9 +14,9 @@ pipeline {
     stages {
         stage('Initialize') {
             steps {
-                echo 'Initialize ${params.PERSON}'
-                echo 'Initialize ${params.BRANCH}'
-                echo 'Initialize ${params.CAN_DANCE}'
+                echo "Initialize ${params.PERSON}"
+                echo "Initialize ${params.BRANCH}"
+                echo "Initialize ${params.CAN_DANCE}"
             }
         }
         stage('Build') {
