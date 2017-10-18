@@ -16,12 +16,13 @@ pipeline {
             steps {
                 echo "Initialize..."
                 echo "PERSON=${params.PERSON} BRANCH=${params.BRANCH} CAN_DANCE=${params.CAN_DANCE}"
-                sh "pwd"
+
             }
         }
         stage('Build') {
             steps {
-                echo 'Build'
+                echo 'Building...'
+                sh "./gradlew clean assembleDebug"
             }
         }
         stage('Upload') {
