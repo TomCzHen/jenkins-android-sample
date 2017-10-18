@@ -14,9 +14,9 @@ pipeline {
     stages {
         stage('Initialize') {
             steps {
-                echo "Initialize ${params.PERSON}"
-                echo "Initialize ${params.BRANCH}"
-                echo "Initialize ${params.CAN_DANCE}"
+                echo "Initialize..."
+                echo "PERSON=${params.PERSON} BRANCH=${params.BRANCH} CAN_DANCE=${params.CAN_DANCE}"
+                sh "pwd"
             }
         }
         stage('Build') {
