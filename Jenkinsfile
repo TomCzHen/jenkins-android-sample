@@ -4,9 +4,6 @@ pipeline {
         stage('Initialize') {
             steps {
                 echo 'Initialize...'
-
-            }
-            steps {
                 echo "PERSON=${params.PERSON} BRANCH=${params.BRANCH} CAN_DANCE=${params.CAN_DANCE}"
             }
         }
