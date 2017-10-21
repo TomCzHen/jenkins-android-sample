@@ -45,7 +45,6 @@ pipeline {
         )
         choice(
                 name: 'BRANCH',
-                defaultValue: 'prod',
                 choices: 'prod\ndev',
                 description: 'Choice Branch'
         )
