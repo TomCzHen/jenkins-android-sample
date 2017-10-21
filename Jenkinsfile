@@ -10,7 +10,7 @@ pipeline {
     stage('Build') {
       steps {
         echo 'Building...'
-        sh './gradlew clean assembleDebug'
+        sh './gradlew clean assembleRelease'
       }
     }
     stage('Upload') {
