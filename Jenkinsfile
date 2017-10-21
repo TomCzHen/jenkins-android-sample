@@ -13,7 +13,7 @@ pipeline {
         gradle {
           rootBuildScriptDir 'app'
           useWrapper true
-          tasks 'clean assembleRelease'
+          tasks 'clean'
         }
       }
     }
