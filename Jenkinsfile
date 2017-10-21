@@ -17,7 +17,7 @@ pipeline {
             steps {
                 echo 'Sign APK'
                 signAndroidApks(
-                        keyStoreId: "24e331bd-2f0c-4476-aee1-1dfa63600c60",
+                        keyStoreId: "94ddde4c-7b9e-459f-bd15-11eda63541de",
                         keyAlias: "tomczhen",
                         apksToSign: "**/*-unsigned.apk",
                         archiveSignedApks: true,
