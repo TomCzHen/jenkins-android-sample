@@ -10,7 +10,11 @@ pipeline {
     stage('Build') {
       steps {
         echo 'Building...'
-        sh './gradlew clean assembleRelease'
+        gradle {
+          rootBuildScriptDir 'app'
+          useWrapper true
+          tasks 'clean assembleRelease'
+        }
       }
     }
     stage('Upload') {
