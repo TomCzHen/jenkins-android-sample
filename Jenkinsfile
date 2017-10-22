@@ -9,16 +9,16 @@ pipeline {
                     echo "${env.DB_ENGINE} ${env.DISABLE_AUTH}"
                     sh 'echo $DB_ENGINE $DISABLE_AUTH'
                 }
-                withCredentials([string(credentialsId: '0c74f122-d8d0-4cab-9cea-8a3b7d76a435', variable: 'test')]) {
-                    sh 'echo $test'
-                }
+
             }
         }
 
         stage('Build') {
             steps {
-                echo 'Building...'
-                sh './gradlew clean assembleRelease'
+                withCredentials([string(credentialsId: '0c74f122-d8d0-4cab-9cea-8a3b7d76a435', variable: 'ORG_GRADLE_PROJECT_test')]) {
+                    echo 'Building...'
+                    sh './gradlew clean assembleRelease'
+                }
             }
         }
 
