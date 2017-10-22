@@ -19,9 +19,7 @@ pipeline {
                 signAndroidApks(
                         keyStoreId: "94ddde4c-7b9e-459f-bd15-11eda63541de",
                         keyAlias: "tomczhen",
-                        apksToSign: "**/*-unsigned.apk",
-                        archiveSignedApks: true,
-                        archiveUnsignedApks: true
+                        apksToSign: "**/*-unsigned.apk"
                 )
             }
         }
