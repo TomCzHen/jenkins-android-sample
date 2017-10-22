@@ -1,12 +1,17 @@
 pipeline {
     agent any
     stages {
-        stage('Initialize') {
-            steps {
-                echo 'Initialize...'
-                echo "PERSON=${params.PERSON} BRANCH=${params.BRANCH} CAN_DANCE=${params.CAN_DANCE}"
+        withEnv(['DISABLE_AUTH=true',
+                 'DB_ENGINE=sqlite']) {
+            stage('Initialize') {
+                steps {
+                    echo 'Initialize...'
+                    echo "PERSON=${params.PERSON} BRANCH=${params.BRANCH} CAN_DANCE=${params.CAN_DANCE}"
+                    sh 'printenv'
+                }
             }
         }
+
         stage('Build') {
             steps {
                 echo 'Building...'
@@ -32,11 +37,6 @@ pipeline {
             }
         }
         stage('Report') {
-            withCredentials([string(credentialsId: '0c74f122-d8d0-4cab-9cea-8a3b7d76a435', variable: 'test1'), string(credentialsId: '0c74f122-d8d0-4cab-9cea-8a3b7d76a435', variable: 'test2')]) {
-                sh '''
-                echo $test1 $test2
-                '''
-            }
             steps {
                 echo 'Report'
             }
