@@ -2,14 +2,13 @@ pipeline {
     agent any
     stages {
         stage('Initialize') {
-            withEnv(['DISABLE_AUTH=true',
-                     'DB_ENGINE=sqlite']) {
-                sh 'printenv'
-            }
             steps {
                 echo 'Initialize...'
                 echo "PERSON=${params.PERSON} BRANCH=${params.BRANCH} CAN_DANCE=${params.CAN_DANCE}"
-
+                withEnv(['DISABLE_AUTH=true',
+                         'DB_ENGINE=sqlite']) {
+                    sh 'printenv'
+                }
             }
         }
 
