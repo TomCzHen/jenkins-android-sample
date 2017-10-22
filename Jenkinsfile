@@ -1,14 +1,15 @@
 pipeline {
     agent any
     stages {
-        withEnv(['DISABLE_AUTH=true',
-                 'DB_ENGINE=sqlite']) {
-            stage('Initialize') {
-                steps {
-                    echo 'Initialize...'
-                    echo "PERSON=${params.PERSON} BRANCH=${params.BRANCH} CAN_DANCE=${params.CAN_DANCE}"
-                    sh 'printenv'
-                }
+        stage('Initialize') {
+            withEnv(['DISABLE_AUTH=true',
+                     'DB_ENGINE=sqlite']) {
+                sh 'printenv'
+            }
+            steps {
+                echo 'Initialize...'
+                echo "PERSON=${params.PERSON} BRANCH=${params.BRANCH} CAN_DANCE=${params.CAN_DANCE}"
+
             }
         }
 
@@ -18,6 +19,7 @@ pipeline {
                 sh './gradlew clean assembleRelease'
             }
         }
+
         stage('Sign APK') {
             steps {
                 echo 'Sign APK'
@@ -30,6 +32,7 @@ pipeline {
                 )
             }
         }
+
         stage('Upload') {
             steps {
                 echo 'Upload'
@@ -42,23 +45,27 @@ pipeline {
             }
         }
     }
+
     parameters {
         string(
                 name: 'PERSON',
                 defaultValue: 'Mr Jenkins',
                 description: 'Who should I say hello to?'
         )
+
         choice(
                 name: 'BRANCH',
                 choices: 'prod\ndev',
                 description: 'Choice Branch'
         )
+
         booleanParam(
                 name: 'CAN_DANCE',
                 defaultValue: true,
                 description: 'Checkbox parameter'
         )
     }
+
     post {
         always {
             echo 'Always Echo!'
