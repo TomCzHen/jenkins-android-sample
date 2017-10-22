@@ -6,7 +6,7 @@ pipeline {
                 echo 'Initialize...'
                 echo "PERSON=${params.PERSON} BRANCH=${params.BRANCH} CAN_DANCE=${params.CAN_DANCE}"
                 withEnv(['DISABLE_AUTH=true', 'DB_ENGINE=sqlite']) {
-                    echo env.DB_ENGINE, env.DISABLE_AUTH
+                    //echo env.DB_ENGINE, env.DISABLE_AUTH
                     sh 'echo $DB_ENGINE $DISABLE_AUTH'
                 }
                 withCredentials([string(credentialsId: '0c74f122-d8d0-4cab-9cea-8a3b7d76a435', variable: 'test')]) {
