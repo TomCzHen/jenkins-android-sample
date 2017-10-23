@@ -29,33 +29,37 @@ pipeline {
                 withEnv(['DISABLE_AUTH=true', 'DB_ENGINE=sqlite']) {
                     echo "${env.DB_ENGINE} ${env.DISABLE_AUTH}"
                     sh 'echo $DB_ENGINE $DISABLE_AUTH'
+                    printenv
                 }
 
             }
         }
 
         stage('Build') {
+            when {
+                branch 'master'
+            }
             steps {
-                when {
-                    branch 'master'
-                    echo 'Building Develop APK...'
-                    sh './gradlew clean assembleDevDebug'
+                echo 'Building Develop APK...'
+                sh './gradlew clean assembleDevDebug'
+            }
+            when {
+                branch 'beta'
+            }
+            steps {
+                withCredentials([string(credentialsId: '0c74f122-d8d0-4cab-9cea-8a3b7d76a435', variable: 'SECRET_KEY')]) {
+                    echo 'Building Beta APK...'
+                    sh './gradlew clean assembleBetaDebug'
                 }
-                when {
-                    branch 'beta'
-                    withCredentials([string(credentialsId: '0c74f122-d8d0-4cab-9cea-8a3b7d76a435', variable: 'SECRET_KEY')]) {
-                        echo 'Building Beta APK...'
-                        sh './gradlew clean assembleBetaDebug'
-                    }
+            }
+            when {
+                branch 'prod'
+            }
+            steps {
+                withCredentials([string(credentialsId: '0c74f122-d8d0-4cab-9cea-8a3b7d76a435', variable: 'SECRET_KEY')]) {
+                    echo 'Building Production APK...'
+                    sh './gradlew clean assembleProd'
                 }
-                when {
-                    branch 'prod'
-                    withCredentials([string(credentialsId: '0c74f122-d8d0-4cab-9cea-8a3b7d76a435', variable: 'SECRET_KEY')]) {
-                        echo 'Building Production APK...'
-                        sh './gradlew clean assembleProd'
-                    }
-                }
-
             }
         }
 
