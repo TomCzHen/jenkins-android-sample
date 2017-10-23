@@ -52,11 +52,12 @@ pipeline {
                 withCredentials([string(credentialsId: 'BETA_SECRET_KEY', variable: 'SECRET_KEY')]) {
 
                     echo 'Building Beta APK...'
-
-                    if (isUnix()) {
-                        sh './gradlew clean assembleBetaDebug'
-                    } else {
-                        bat 'gradlew clean assembleBetaDebug'
+                    script {
+                        if (isUnix()) {
+                            sh './gradlew clean assembleBetaDebug'
+                        } else {
+                            bat 'gradlew clean assembleBetaDebug'
+                        }
                     }
 
                 }
