@@ -30,17 +30,27 @@ pipeline {
                 withEnv(['DISABLE_AUTH=true', 'DB_ENGINE=sqlite']) {
                     echo "${env.DB_ENGINE} ${env.DISABLE_AUTH}"
                     sh 'echo $DB_ENGINE $DISABLE_AUTH'
+                    echo currentBuild.changeSets
                 }
             }
         }
 
         stage('Build Develop APK') {
+
             when {
                 branch 'master'
             }
+
             steps {
                 echo 'Building Develop APK...'
-                sh './gradlew clean assembleDevDebug'
+
+                script {
+                    if (isUnix()) {
+                        sh './gradlew clean assembleDevDebug'
+                    } else {
+                        bat 'gradlew clean assembleDevDebug'
+                    }
+                }
             }
         }
 
@@ -68,9 +78,15 @@ pipeline {
                 branch 'prod'
             }
             steps {
+                echo 'Building Production APK...'
                 withCredentials([string(credentialsId: 'PROD_SECRET_KEY', variable: 'SECRET_KEY')]) {
-                    echo 'Building Production APK...'
-                    sh './gradlew clean assembleProd'
+                    script {
+                        if (isUnix()) {
+                            sh './gradlew clean assembleProd'
+                        } else {
+                            bat 'gradlew clean assembleProd'
+                        }
+                    }
                 }
             }
         }
