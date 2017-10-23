@@ -26,23 +26,24 @@ pipeline {
             steps {
                 echo 'Initialize...'
                 echo "PERSON=${params.PERSON} BRANCH=${params.BRANCH} CAN_DANCE=${params.CAN_DANCE}"
+
                 withEnv(['DISABLE_AUTH=true', 'DB_ENGINE=sqlite']) {
                     echo "${env.DB_ENGINE} ${env.DISABLE_AUTH}"
                     sh 'echo $DB_ENGINE $DISABLE_AUTH'
                 }
-
             }
         }
 
         stage('Build') {
             when {
                 branch 'master'
+                echo 'Master Branch'
             }
             steps {
                 echo 'Building Develop APK...'
                 sh './gradlew clean assembleDevDebug'
             }
-            when {
+/*            when {
                 branch 'beta'
             }
             steps {
@@ -59,7 +60,7 @@ pipeline {
                     echo 'Building Production APK...'
                     sh './gradlew clean assembleProd'
                 }
-            }
+            }*/
         }
 
         stage('Sign APK') {
