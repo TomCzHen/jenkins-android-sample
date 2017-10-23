@@ -43,7 +43,7 @@ pipeline {
                 echo 'Building Develop APK...'
                 sh './gradlew clean assembleDevDebug'
             }
-            when {
+/*            when {
                 branch 'beta'
             }
             steps {
@@ -60,7 +60,7 @@ pipeline {
                     echo 'Building Production APK...'
                     sh './gradlew clean assembleProd'
                 }
-            }
+            }*/
         }
 
         stage('Sign APK') {
