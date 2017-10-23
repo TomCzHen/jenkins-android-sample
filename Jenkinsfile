@@ -49,7 +49,8 @@ pipeline {
                 branch 'beta'
             }
             steps {
-                withCredentials([string(credentialsId: '0c74f122-d8d0-4cab-9cea-8a3b7d76a435', variable: 'SECRET_KEY')]) {
+                withCredentials([string(credentialsId: 'BETA_SECRET_KEY', variable: 'SECRET_KEY')]) {
+                    assert env.SECRET_KEY != ""
                     echo 'Building Beta APK...'
                     sh './gradlew clean assembleBetaDebug'
                 }
@@ -59,10 +60,10 @@ pipeline {
 
         stage('Build Prod APK') {
             when {
-                branch 'master'
+                branch 'prod'
             }
             steps {
-                withCredentials([string(credentialsId: '0c74f122-d8d0-4cab-9cea-8a3b7d76a435', variable: 'SECRET_KEY')]) {
+                withCredentials([string(credentialsId: 'PROD_SECRET_KEY', variable: 'SECRET_KEY')]) {
                     echo 'Building Production APK...'
                     sh './gradlew clean assembleProd'
                 }
@@ -71,12 +72,12 @@ pipeline {
 
         stage('Sign Prod APK') {
             when {
-                branch 'master'
+                branch 'prod'
             }
             steps {
                 echo 'Sign APK'
                 signAndroidApks(
-                        keyStoreId: "94ddde4c-7b9e-459f-bd15-11eda63541de",
+                        keyStoreId: "ANDROID_SIGN_KEY_STORE",
                         keyAlias: "tomczhen",
                         apksToSign: "**/*-prod-release-unsigned.apk",
                         archiveSignedApks: false,
