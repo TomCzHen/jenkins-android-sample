@@ -144,7 +144,7 @@ pipeline {
 
 @NonCPS
 def getChangeString() {
-    MAX_MSG_LEN = 10
+    MAX_MSG_LEN = 100
     def changeString = ""
 
     echo "Gathering SCM changes"
