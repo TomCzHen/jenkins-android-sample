@@ -71,14 +71,14 @@ pipeline {
 
         stage('Sign Prod APK') {
             when {
-                branch 'prod'
+                branch 'master'
             }
             steps {
                 echo 'Sign APK'
                 signAndroidApks(
                         keyStoreId: "94ddde4c-7b9e-459f-bd15-11eda63541de",
                         keyAlias: "tomczhen",
-                        apksToSign: "**/*-unsigned.apk",
+                        apksToSign: "**/*-prod-release-unsigned.apk",
                         archiveSignedApks: false,
                         archiveUnsignedApks: false
                 )
