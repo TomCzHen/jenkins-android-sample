@@ -34,7 +34,7 @@ pipeline {
             }
         }
 
-        stage('Build') {
+        stage('Build Develop APK') {
             when {
                 branch 'master'
             }
@@ -42,7 +42,10 @@ pipeline {
                 echo 'Building Develop APK...'
                 sh './gradlew clean assembleDevDebug'
             }
-/*            when {
+        }
+
+        stage('Build Beta APK') {
+            when {
                 branch 'beta'
             }
             steps {
@@ -50,7 +53,11 @@ pipeline {
                     echo 'Building Beta APK...'
                     sh './gradlew clean assembleBetaDebug'
                 }
+
             }
+        }
+
+        stage('Build Prod APK') {
             when {
                 branch 'prod'
             }
@@ -59,10 +66,10 @@ pipeline {
                     echo 'Building Production APK...'
                     sh './gradlew clean assembleProd'
                 }
-            }*/
+            }
         }
 
-        stage('Sign APK') {
+        stage('Sign Prod APK') {
             when {
                 branch 'prod'
             }
