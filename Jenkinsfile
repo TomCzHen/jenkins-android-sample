@@ -29,7 +29,6 @@ pipeline {
                 withEnv(['DISABLE_AUTH=true', 'DB_ENGINE=sqlite']) {
                     echo "${env.DB_ENGINE} ${env.DISABLE_AUTH}"
                     sh 'echo $DB_ENGINE $DISABLE_AUTH'
-                    printenv
                 }
 
             }
@@ -43,7 +42,7 @@ pipeline {
                 echo 'Building Develop APK...'
                 sh './gradlew clean assembleDevDebug'
             }
-/*            when {
+            when {
                 branch 'beta'
             }
             steps {
@@ -60,7 +59,7 @@ pipeline {
                     echo 'Building Production APK...'
                     sh './gradlew clean assembleProd'
                 }
-            }*/
+            }
         }
 
         stage('Sign APK') {
