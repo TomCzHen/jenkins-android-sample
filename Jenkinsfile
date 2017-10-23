@@ -59,7 +59,7 @@ pipeline {
 
         stage('Build Prod APK') {
             when {
-                branch 'prod'
+                branch 'master'
             }
             steps {
                 withCredentials([string(credentialsId: '0c74f122-d8d0-4cab-9cea-8a3b7d76a435', variable: 'SECRET_KEY')]) {
