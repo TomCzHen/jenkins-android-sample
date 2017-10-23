@@ -19,6 +19,7 @@ android {
         }
         debug {
             applicationIdSuffix ".debug"
+            versionNameSuffix "-debug"
         }
     }
 
@@ -30,10 +31,8 @@ android {
         beta {
             applicationIdSuffix ".beta"
             versionNameSuffix "-beta"
-            buildConfigField "String", "SECRET_KEY", String.format("\"%s\"", System.getenv("BETA_SECRET_KEY"))
         }
         prod {
-            buildConfigField "String", "SECRET_KEY", String.format("\"%s\"", System.getenv("PROD_SECRET_KEY"))
         }
     }
 }

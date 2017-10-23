@@ -1,5 +1,26 @@
 pipeline {
     agent any
+
+    parameters {
+        string(
+                name: 'PERSON',
+                defaultValue: 'Mr Jenkins',
+                description: 'Who should I say hello to?'
+        )
+
+        choice(
+                name: 'BRANCH',
+                choices: 'prod\ndev',
+                description: 'Choice Branch'
+        )
+
+        booleanParam(
+                name: 'CAN_DANCE',
+                defaultValue: true,
+                description: 'Checkbox parameter'
+        )
+    }
+
     stages {
         stage('Initialize') {
             steps {
@@ -46,26 +67,6 @@ pipeline {
                 echo 'Report'
             }
         }
-    }
-
-    parameters {
-        string(
-                name: 'PERSON',
-                defaultValue: 'Mr Jenkins',
-                description: 'Who should I say hello to?'
-        )
-
-        choice(
-                name: 'BRANCH',
-                choices: 'prod\ndev',
-                description: 'Choice Branch'
-        )
-
-        booleanParam(
-                name: 'CAN_DANCE',
-                defaultValue: true,
-                description: 'Checkbox parameter'
-        )
     }
 
     post {
