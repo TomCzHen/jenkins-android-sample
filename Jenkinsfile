@@ -35,10 +35,9 @@ pipeline {
         }
 
         stage('Build') {
-/*            when {
+            when {
                 branch 'master'
-                echo 'Master Branch'
-            }*/
+            }
             steps {
                 echo 'Building Develop APK...'
                 sh './gradlew clean assembleDevDebug'
@@ -64,6 +63,9 @@ pipeline {
         }
 
         stage('Sign APK') {
+            when {
+                branch 'prod'
+            }
             steps {
                 echo 'Sign APK'
                 signAndroidApks(
