@@ -1,5 +1,4 @@
 apply plugin: 'com.android.application'
-
 android {
     compileSdkVersion 26
     buildToolsVersion '26.0.0'
@@ -10,7 +9,7 @@ android {
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
-        buildConfigField 'String', 'SECRET_KEY', '"' + (System.getenv("SECRET_KEY") ?: "Develop Secret Key") + '"'
+        buildConfigField "String", "SECRET_KEY", String.format("\"%s\"", System.getenv("SECRET_KEY") ?: "Develop Secret Key")
     }
 
     buildTypes {
@@ -31,6 +30,10 @@ android {
         beta {
             applicationIdSuffix ".beta"
             versionNameSuffix "-beta"
+            buildConfigField "String", "SECRET_KEY", String.format("\"%s\"", System.getenv("BETA_SECRET_KEY"))
+        }
+        prod {
+            buildConfigField "String", "SECRET_KEY", String.format("\"%s\"", System.getenv("PROD_SECRET_KEY"))
         }
     }
 }

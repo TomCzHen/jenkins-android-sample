@@ -1,0 +1,18 @@
+version: "3"
+services:
+  jenkins:
+    image: jenkinsci/jenkins:2.85
+    container_name: jenkins-blueocean
+    restart: unless-stopped
+    privileged: true
+    user: root
+    ports:
+      - "8080:8080"
+      - "50000:50000"
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - jenkins_home:/var/jenkins_home
+      - /home/tomczhen/Android/Sdk:/opt/android-linux-sdk
+volumes:
+  jenkins_home:
