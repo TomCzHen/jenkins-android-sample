@@ -48,18 +48,24 @@ pipeline {
             when {
                 branch 'beta'
             }
-            steps {
+            try {
                 withCredentials([string(credentialsId: 'BETA_SECRET_KEY', variable: 'SECRET_KEY')]) {
+                    def betaSecretKey = env.SECRET_KEY
+                }
+            } catch (exec) {
+                echo "无法获取 BETA_SECRET_KEY!"
+                throw exec
+            }
+            steps {
+                echo 'Building Beta APK...'
 
-                    echo 'Building Beta APK...'
-                    script {
-                        if (isUnix()) {
-                            sh './gradlew clean assembleBetaDebug'
-                        } else {
-                            bat 'gradlew clean assembleBetaDebug'
-                        }
+
+                script {
+                    if (isUnix()) {
+                        sh './gradlew clean assembleBetaDebug'
+                    } else {
+                        bat 'gradlew clean assembleBetaDebug'
                     }
-
                 }
 
             }
