@@ -50,9 +50,15 @@ pipeline {
             }
             steps {
                 withCredentials([string(credentialsId: 'BETA_SECRET_KEY', variable: 'SECRET_KEY')]) {
-                    assert env.SECRET_KEY != ""
+
                     echo 'Building Beta APK...'
-                    sh './gradlew clean assembleBetaDebug'
+
+                    if (isUnix()) {
+                        sh './gradlew clean assembleBetaDebug'
+                    } else {
+                        bat 'gradlew clean assembleBetaDebug'
+                    }
+
                 }
 
             }
