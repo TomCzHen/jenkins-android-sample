@@ -27,10 +27,12 @@ android {
         dev {
             applicationIdSuffix ".dev"
             versionNameSuffix "-dev"
+            resValue("string", "version_name_suffix", getVersionNameSuffix())
         }
         beta {
             applicationIdSuffix ".beta"
             versionNameSuffix "-beta"
+            resValue("string", "version_name_suffix", getVersionNameSuffix())
         }
         prod {
         }

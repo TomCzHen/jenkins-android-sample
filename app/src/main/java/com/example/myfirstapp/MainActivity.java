@@ -1,8 +1,10 @@
 package com.example.myfirstapp;
 
 import android.content.Intent;
+import android.icu.text.IDNA;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -14,8 +16,11 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        TextView textView = (TextView) findViewById(R.id.textView);
-        textView.setText(BuildConfig.SECRET_KEY);
+        TextView secretKeyTextView = (TextView) findViewById(R.id.secretKeyTextView);
+        secretKeyTextView.setText(BuildConfig.SECRET_KEY);
+
+        TextView versionNameSuffixTextView = (TextView) findViewById(R.id.versionNameSuffixTextView);
+        versionNameSuffixTextView.setText(getString(R.string.version_name_suffix));
     }
 
     public void sendMessage(View view) {

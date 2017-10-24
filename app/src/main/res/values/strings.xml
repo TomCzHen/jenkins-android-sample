@@ -2,4 +2,6 @@
     <string name="app_name">My First App</string>
     <string name="edit_message">Enter a message</string>
     <string name="button_send">Send</string>
+    <string name="secret_key_label" translatable="false">Secret Key</string>
+    <string name="version_name_suffix_label" translatable="false">Version Name Suffix</string>
 </resources>
