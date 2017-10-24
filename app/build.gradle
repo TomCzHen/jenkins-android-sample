@@ -35,6 +35,7 @@ android {
             resValue("string", "version_name_suffix", getVersionNameSuffix())
         }
         prod {
+            resValue("string", "version_name_suffix", getVersionNameSuffix())
         }
     }
 }
