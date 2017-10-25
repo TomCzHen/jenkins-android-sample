@@ -19,8 +19,11 @@
 ## Jenkinsfile
 
 > 参考文档：
+
 > [Blue Ocean ](https://jenkins.io/doc/book/blueocean/)
+
 > [Pipeline Syntax](https://jenkins.io/doc/book/pipeline/syntax/)
+
 > [Pipeline Steps Reference](https://jenkins.io/doc/pipeline/steps/)
 
 所有的构建步骤都在 Jenkinsfile 中，不再通过 Web UI 添加，将 CI 也纳入版本控制。
@@ -163,7 +166,9 @@ steps {
 
 ## Gradle
 
-> 参考文档：[Configure Build Variants](https://developer.android.com/studio/build/build-variants.html)
+> 参考文档：
+
+> [Configure Build Variants](https://developer.android.com/studio/build/build-variants.html)
 
 ### Product Flavors
 
