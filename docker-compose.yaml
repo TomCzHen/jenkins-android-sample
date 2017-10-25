@@ -13,7 +13,7 @@ services:
       - /etc/localtime:/etc/localtime:ro
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - jenkins_home:/var/jenkins_home
-      - /home/tomczhen/Android/Sdk:/opt/android-linux-sdk
+      - ${ANDROID_HOME}:/opt/android-linux-sdk
 
 volumes:
   jenkins_home:
