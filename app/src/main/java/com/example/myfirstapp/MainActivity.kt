@@ -14,16 +14,16 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        val secretKeyTextView = findViewById<TextView>(R.id.secretKeyTextView)
+        val secretKeyTextView = findViewById(R.id.secretKeyTextView) as TextView
         secretKeyTextView.text = BuildConfig.SECRET_KEY
 
-        val versionNameSuffixTextView = findViewById<TextView>(R.id.versionNameSuffixTextView)
+        val versionNameSuffixTextView = findViewById(R.id.versionNameSuffixTextView) as TextView
         versionNameSuffixTextView.text = getString(R.string.version_name_suffix)
     }
 
     fun sendMessage() {
         val intent = Intent(this, DisplayMessageActivity::class.java)
-        val editText = findViewById<EditText>(R.id.editText)
+        val editText = findViewById(R.id.editText) as EditText
         val message = editText.text.toString()
         intent.putExtra(EXTRA_MESSAGE, message)
         startActivity(intent)
