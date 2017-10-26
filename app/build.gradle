@@ -1,7 +1,8 @@
 apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
 android {
     compileSdkVersion 26
-    buildToolsVersion '26.0.0'
+    buildToolsVersion '26.0.2'
     defaultConfig {
         applicationId "com.example.myfirstapp"
         minSdkVersion 23
@@ -23,18 +24,22 @@ android {
         }
     }
 
+    flavorDimensions "tier"
     productFlavors {
         dev {
+            dimension "tier"
             applicationIdSuffix ".dev"
             versionNameSuffix "-dev"
             resValue("string", "version_name_suffix", getVersionNameSuffix())
         }
         beta {
+            dimension "tier"
             applicationIdSuffix ".beta"
             versionNameSuffix "-beta"
             resValue("string", "version_name_suffix", getVersionNameSuffix())
         }
         prod {
+            dimension "tier"
             resValue("string", "version_name_suffix", "")
         }
     }
@@ -48,4 +53,8 @@ dependencies {
     compile 'com.android.support:appcompat-v7:26.+'
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
     testCompile 'junit:junit:4.12'
+    compile "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
+}
+repositories {
+    mavenCentral()
 }
