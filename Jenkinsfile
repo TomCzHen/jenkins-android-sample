@@ -110,7 +110,7 @@ pipeline {
         stage('Upload') {
             steps {
                 echo 'Upload'
-                archiveArtifacts(onlyIfSuccessful: true, artifacts: 'app/build/outputs/apk/*.apk')
+                archiveArtifacts(onlyIfSuccessful: true, artifacts: 'app/build/outputs/apk/**/*.apk')
             }
         }
         stage('Report') {
