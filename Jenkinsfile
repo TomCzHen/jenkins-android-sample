@@ -49,57 +49,57 @@ pipeline {
                 }
             }
         }
-    }
 
-    stage('Build Beta APK') {
-        when {
-            branch 'beta'
-        }
-        steps {
-            echo 'Building Beta APK...'
-            withCredentials([string(credentialsId: 'BETA_SECRET_KEY', variable: 'SECRET_KEY')]) {
-                sh './gradlew clean assembleBetaDebug'
+        stage('Build Beta APK') {
+            when {
+                branch 'beta'
+            }
+            steps {
+                echo 'Building Beta APK...'
+                withCredentials([string(credentialsId: 'BETA_SECRET_KEY', variable: 'SECRET_KEY')]) {
+                    sh './gradlew clean assembleBetaDebug'
+                }
             }
         }
-    }
 
-    stage('Build Prod APK') {
-        when {
-            branch 'prod'
-        }
-        steps {
-            echo 'Building Production APK...'
-            withCredentials([string(credentialsId: 'PROD_SECRET_KEY', variable: 'SECRET_KEY')]) {
-                sh './gradlew clean assembleProd'
+        stage('Build Prod APK') {
+            when {
+                branch 'prod'
+            }
+            steps {
+                echo 'Building Production APK...'
+                withCredentials([string(credentialsId: 'PROD_SECRET_KEY', variable: 'SECRET_KEY')]) {
+                    sh './gradlew clean assembleProd'
+                }
             }
         }
-    }
 
-    stage('Sign Prod APK') {
-        when {
-            branch 'prod'
+        stage('Sign Prod APK') {
+            when {
+                branch 'prod'
+            }
+            steps {
+                echo 'Sign APK'
+                signAndroidApks(
+                        keyStoreId: "ANDROID_SIGN_KEY_STORE",
+                        keyAlias: "tomczhen",
+                        apksToSign: "**/*-prod-release-unsigned.apk",
+                        archiveSignedApks: false,
+                        archiveUnsignedApks: false
+                )
+            }
         }
-        steps {
-            echo 'Sign APK'
-            signAndroidApks(
-                    keyStoreId: "ANDROID_SIGN_KEY_STORE",
-                    keyAlias: "tomczhen",
-                    apksToSign: "**/*-prod-release-unsigned.apk",
-                    archiveSignedApks: false,
-                    archiveUnsignedApks: false
-            )
-        }
-    }
 
-    stage('Upload') {
-        steps {
-            echo 'Upload'
-            archiveArtifacts(onlyIfSuccessful: true, artifacts: 'app/build/outputs/apk/**/*.apk')
+        stage('Upload') {
+            steps {
+                echo 'Upload'
+                archiveArtifacts(onlyIfSuccessful: true, artifacts: 'app/build/outputs/apk/**/*.apk')
+            }
         }
-    }
-    stage('Report') {
-        steps {
-            echo 'Report'
+        stage('Report') {
+            steps {
+                echo 'Report'
+            }
         }
     }
 
