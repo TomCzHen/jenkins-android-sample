@@ -41,12 +41,7 @@ pipeline {
             }
             steps {
                 echo 'Building Develop APK...'
-                try {
-                    sh './gradlew clean assembleDevDebug'
-                }
-                catch (error) {
-                    throw error
-                }
+                sh './gradlew clean assembleDevDebug'
             }
         }
 
