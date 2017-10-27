@@ -42,16 +42,6 @@ pipeline {
             }
         }
 
-        stage('Try Catch Example') {
-            steps {
-                try {
-                    sh "echo message"
-                } catch (error) {
-                    throw error
-                }
-            }
-        }
-
         stage('Build Develop APK') {
 
             when {
@@ -61,16 +51,26 @@ pipeline {
                 echo 'Building Develop APK...'
                 sh './gradlew clean assembleDevDebug'
             }
+            post {
+                failure {
+                    echo "Build Failure!"
+                }
+            }
         }
 
         stage('Build Beta APK') {
             when {
-                branch 'beta'
+                branch 'master'
             }
             steps {
                 echo 'Building Beta APK...'
                 withCredentials([string(credentialsId: 'BETA_SECRET_KEY', variable: 'SECRET_KEY')]) {
                     sh './gradlew clean assembleBetaDebug'
+                }
+                post {
+                    failure {
+                        echo "withCredentials Failure!"
+                    }
                 }
             }
         }
