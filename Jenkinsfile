@@ -34,91 +34,78 @@ pipeline {
                 }
             }
         }
-        try {
-            stage('Build Develop APK') {
+        stage('Build Develop APK') {
 
-                when {
-                    branch 'master'
-                }
-                steps {
-                    echo 'Building Develop APK...'
-                    script {
-                        if (isUnix()) {
-                            sh './gradlew clean assembleDevDebug'
-                        } else {
-                            bat 'gradlew clean assembleDevDebug'
-                        }
-                    }
-                }
-            }
-        }
-        catch (error) {
-            throw error
-        }
-
-        stage('Build Beta APK') {
             when {
-                branch 'beta'
+                branch 'master'
             }
             steps {
-                echo 'Building Beta APK...'
+                echo 'Building Develop APK...'
+                try {
+                    sh './gradlew clean assembleDevDebug'
+                }
+                catch (ex) {
+                    throw ex
+                }
+            }
+        }
+    }
+
+    stage('Build Beta APK') {
+        when {
+            branch 'beta'
+        }
+        steps {
+            echo 'Building Beta APK...'
+            try {
                 withCredentials([string(credentialsId: 'BETA_SECRET_KEY', variable: 'SECRET_KEY')]) {
-                    script {
-                        if (isUnix()) {
-                            sh './gradlew clean assembleBetaDebug'
-                        } else {
-                            bat 'gradlew clean assembleBetaDebug'
-                        }
-                    }
-                }
-
-            }
-        }
-
-        stage('Build Prod APK') {
-            when {
-                branch 'prod'
-            }
-            steps {
-                echo 'Building Production APK...'
-                withCredentials([string(credentialsId: 'PROD_SECRET_KEY', variable: 'SECRET_KEY')]) {
-                    script {
-                        if (isUnix()) {
-                            sh './gradlew clean assembleProd'
-                        } else {
-                            bat 'gradlew clean assembleProd'
-                        }
-                    }
+                    sh './gradlew clean assembleBetaDebug'
                 }
             }
-        }
+            catch (ex) {
+                throw ex
+            }
 
-        stage('Sign Prod APK') {
-            when {
-                branch 'prod'
-            }
-            steps {
-                echo 'Sign APK'
-                signAndroidApks(
-                        keyStoreId: "ANDROID_SIGN_KEY_STORE",
-                        keyAlias: "tomczhen",
-                        apksToSign: "**/*-prod-release-unsigned.apk",
-                        archiveSignedApks: false,
-                        archiveUnsignedApks: false
-                )
-            }
         }
+    }
 
-        stage('Upload') {
-            steps {
-                echo 'Upload'
-                archiveArtifacts(onlyIfSuccessful: true, artifacts: 'app/build/outputs/apk/**/*.apk')
+    stage('Build Prod APK') {
+        when {
+            branch 'prod'
+        }
+        steps {
+            echo 'Building Production APK...'
+            withCredentials([string(credentialsId: 'PROD_SECRET_KEY', variable: 'SECRET_KEY')]) {
+                sh './gradlew clean assembleProd'
             }
         }
-        stage('Report') {
-            steps {
-                echo 'Report'
-            }
+    }
+
+    stage('Sign Prod APK') {
+        when {
+            branch 'prod'
+        }
+        steps {
+            echo 'Sign APK'
+            signAndroidApks(
+                    keyStoreId: "ANDROID_SIGN_KEY_STORE",
+                    keyAlias: "tomczhen",
+                    apksToSign: "**/*-prod-release-unsigned.apk",
+                    archiveSignedApks: false,
+                    archiveUnsignedApks: false
+            )
+        }
+    }
+
+    stage('Upload') {
+        steps {
+            echo 'Upload'
+            archiveArtifacts(onlyIfSuccessful: true, artifacts: 'app/build/outputs/apk/**/*.apk')
+        }
+    }
+    stage('Report') {
+        steps {
+            echo 'Report'
         }
     }
 
