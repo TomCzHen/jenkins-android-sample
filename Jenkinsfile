@@ -52,6 +52,11 @@ pipeline {
                 withCredentials([string(credentialsId: 'BETA_SECRET_KEY', variable: 'SECRET_KEY')]) {
                     sh './gradlew clean assembleDevDebug'
                 }
+                post {
+                    failure {
+                        echo "With Failure!"
+                    }
+                }
             }
             post {
                 failure {
