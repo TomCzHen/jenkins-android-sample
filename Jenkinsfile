@@ -40,9 +40,9 @@ pipeline {
             when {
                 branch 'master'
             }
-            try {
-                steps {
-                    echo 'Building Develop APK...'
+            steps {
+                echo 'Building Develop APK...'
+                try {
                     script {
                         if (isUnix()) {
                             sh './gradlew clean assembleDevDebug'
@@ -51,9 +51,9 @@ pipeline {
                         }
                     }
                 }
-            }
-            catch (Exception e) {
-                throw e
+                catch (error) {
+                    throw error
+                }
             }
         }
     }
