@@ -22,6 +22,11 @@ pipeline {
     }
 
     stages {
+
+        stage('Example') {
+            echo "Test Example"
+        }
+
         stage('Initialize') {
             steps {
                 echo 'Initialize...'
