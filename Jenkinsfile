@@ -34,27 +34,26 @@ pipeline {
                 }
             }
         }
+        try {
+            stage('Build Develop APK') {
 
-        stage('Build Develop APK') {
-
-            when {
-                branch 'master'
-            }
-            steps {
-                echo 'Building Develop APK...'
-                script {
-                    if (isUnix()) {
-                        try {
+                when {
+                    branch 'master'
+                }
+                steps {
+                    echo 'Building Develop APK...'
+                    script {
+                        if (isUnix()) {
                             sh './gradlew clean assembleDevDebug'
+                        } else {
+                            bat 'gradlew clean assembleDevDebug'
                         }
-                        catch (error) {
-                            throw error
-                        }
-                    } else {
-                        bat 'gradlew clean assembleDevDebug'
                     }
                 }
             }
+        }
+        catch (error) {
+            throw error
         }
 
         stage('Build Beta APK') {
