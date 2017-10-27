@@ -24,7 +24,13 @@ pipeline {
     stages {
 
         stage('Example') {
-            echo "Test Example"
+            steps {
+                try {
+                    echo "Test Example"
+                } catch (error) {
+                    throw error
+                }
+            }
         }
 
         stage('Initialize') {
