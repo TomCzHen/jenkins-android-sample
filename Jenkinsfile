@@ -34,13 +34,13 @@ pipeline {
                 }
             }
         }
-        try {
-            stage('Build Develop APK') {
 
-                when {
-                    branch 'master'
-                }
+        stage('Build Develop APK') {
 
+            when {
+                branch 'master'
+            }
+            try {
                 steps {
                     echo 'Building Develop APK...'
                     script {
@@ -50,13 +50,11 @@ pipeline {
                             bat 'gradlew clean assembleDevDebug'
                         }
                     }
-
-
                 }
             }
-        }
-        catch (e) {
-            throw e
+            catch (Exception e) {
+                throw e
+            }
         }
     }
 
