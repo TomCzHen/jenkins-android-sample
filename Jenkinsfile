@@ -144,7 +144,6 @@ post {
         echo 'Build Aborted!'
     }
 }
-}
 
 @NonCPS
 def getChangeString() {
