@@ -57,15 +57,9 @@ pipeline {
         }
         steps {
             echo 'Building Beta APK...'
-            try {
-                withCredentials([string(credentialsId: 'BETA_SECRET_KEY', variable: 'SECRET_KEY')]) {
-                    sh './gradlew clean assembleBetaDebug'
-                }
+            withCredentials([string(credentialsId: 'BETA_SECRET_KEY', variable: 'SECRET_KEY')]) {
+                sh './gradlew clean assembleBetaDebug'
             }
-            catch (ex) {
-                throw ex
-            }
-
         }
     }
 
