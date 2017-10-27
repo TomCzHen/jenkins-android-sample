@@ -9,6 +9,8 @@ services:
     ports:
       - "8080:8080"
       - "50000:50000"
+    environment:
+      - ANDROID_HOME=/opt/android-linux-sdk
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - /var/run/docker.sock:/var/run/docker.sock:ro
