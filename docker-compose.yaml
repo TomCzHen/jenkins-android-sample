@@ -11,6 +11,8 @@ services:
       - "50000:50000"
     environment:
       - ANDROID_HOME=/opt/android-linux-sdk
+      - ANDROID_SDK_HOME=/var/jenkins_home/temp/android
+      - GRADLE_USER_HOME=/var/jenkins_home/tools/gradle
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - /var/run/docker.sock:/var/run/docker.sock:ro
