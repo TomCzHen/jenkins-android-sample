@@ -42,17 +42,17 @@ pipeline {
             }
             steps {
                 echo 'Building Develop APK...'
-                try {
-                    script {
-                        if (isUnix()) {
+                script {
+                    if (isUnix()) {
+                        try {
                             sh './gradlew clean assembleDevDebug'
-                        } else {
-                            bat 'gradlew clean assembleDevDebug'
                         }
+                        catch (error) {
+                            throw error
+                        }
+                    } else {
+                        bat 'gradlew clean assembleDevDebug'
                     }
-                }
-                catch (error) {
-                    throw error
                 }
             }
         }
