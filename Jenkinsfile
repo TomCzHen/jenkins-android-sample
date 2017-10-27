@@ -56,92 +56,92 @@ pipeline {
                 }
             }
         }
-    }
 
-    stage('Build Beta APK') {
-        when {
-            branch 'beta'
+        stage('Build Beta APK') {
+            when {
+                branch 'beta'
+            }
+            steps {
+                echo 'Building Beta APK...'
+                withCredentials([string(credentialsId: 'BETA_SECRET_KEY', variable: 'SECRET_KEY')]) {
+                    script {
+                        if (isUnix()) {
+                            sh './gradlew clean assembleBetaDebug'
+                        } else {
+                            bat 'gradlew clean assembleBetaDebug'
+                        }
+                    }
+                }
+
+            }
         }
-        steps {
-            echo 'Building Beta APK...'
-            withCredentials([string(credentialsId: 'BETA_SECRET_KEY', variable: 'SECRET_KEY')]) {
-                script {
-                    if (isUnix()) {
-                        sh './gradlew clean assembleBetaDebug'
-                    } else {
-                        bat 'gradlew clean assembleBetaDebug'
+
+        stage('Build Prod APK') {
+            when {
+                branch 'prod'
+            }
+            steps {
+                echo 'Building Production APK...'
+                withCredentials([string(credentialsId: 'PROD_SECRET_KEY', variable: 'SECRET_KEY')]) {
+                    script {
+                        if (isUnix()) {
+                            sh './gradlew clean assembleProd'
+                        } else {
+                            bat 'gradlew clean assembleProd'
+                        }
                     }
                 }
             }
-
         }
-    }
 
-    stage('Build Prod APK') {
-        when {
-            branch 'prod'
+        stage('Sign Prod APK') {
+            when {
+                branch 'prod'
+            }
+            steps {
+                echo 'Sign APK'
+                signAndroidApks(
+                        keyStoreId: "ANDROID_SIGN_KEY_STORE",
+                        keyAlias: "tomczhen",
+                        apksToSign: "**/*-prod-release-unsigned.apk",
+                        archiveSignedApks: false,
+                        archiveUnsignedApks: false
+                )
+            }
         }
-        steps {
-            echo 'Building Production APK...'
-            withCredentials([string(credentialsId: 'PROD_SECRET_KEY', variable: 'SECRET_KEY')]) {
-                script {
-                    if (isUnix()) {
-                        sh './gradlew clean assembleProd'
-                    } else {
-                        bat 'gradlew clean assembleProd'
-                    }
-                }
+
+        stage('Upload') {
+            steps {
+                echo 'Upload'
+                archiveArtifacts(onlyIfSuccessful: true, artifacts: 'app/build/outputs/apk/**/*.apk')
+            }
+        }
+        stage('Report') {
+            steps {
+                echo 'Report'
             }
         }
     }
 
-    stage('Sign Prod APK') {
-        when {
-            branch 'prod'
+    post {
+        always {
+            echo 'Always Echo!'
         }
-        steps {
-            echo 'Sign APK'
-            signAndroidApks(
-                    keyStoreId: "ANDROID_SIGN_KEY_STORE",
-                    keyAlias: "tomczhen",
-                    apksToSign: "**/*-prod-release-unsigned.apk",
-                    archiveSignedApks: false,
-                    archiveUnsignedApks: false
-            )
+        success {
+            echo 'Build Success!'
         }
-    }
-
-    stage('Upload') {
-        steps {
-            echo 'Upload'
-            archiveArtifacts(onlyIfSuccessful: true, artifacts: 'app/build/outputs/apk/**/*.apk')
+        failure {
+            echo 'Build Failure!'
         }
-    }
-    stage('Report') {
-        steps {
-            echo 'Report'
+        changed {
+            echo 'Build Status Changed!'
         }
-    }
-}
-
-post {
-    always {
-        echo 'Always Echo!'
-    }
-    success {
-        echo 'Build Success!'
-    }
-    failure {
-        echo 'Build Failure!'
-    }
-    changed {
-        echo 'Build Status Changed!'
-    }
-    unstable {
-        echo 'Test Failure!'
-    }
-    aborted {
-        echo 'Build Aborted!'
+        unstable {
+            echo 'Test Failure!'
+        }
+        aborted {
+            echo 'Build Aborted!'
+        }
     }
 }
 
