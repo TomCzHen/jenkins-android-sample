@@ -3,48 +3,45 @@ pipeline {
 
     parameters {
         string(
-                name: 'PERSON',
-                defaultValue: 'Mr Jenkins',
-                description: 'Who should I say hello to?'
+                name: 'PARAM_STRING',
+                defaultValue: 'String',
+                description: 'String Parameter'
         )
 
         choice(
-                name: 'BRANCH',
-                choices: 'prod\ndev',
-                description: 'Choice Branch'
+                name: 'PARAM_CHOICE',
+                choices: '1st\n2nd\n3rd',
+                description: 'Choice Parameter'
         )
 
         booleanParam(
-                name: 'CAN_DANCE',
+                name: 'PARAM_CHECKBOX',
                 defaultValue: true,
-                description: 'Checkbox parameter'
+                description: 'Checkbox Parameter'
         )
     }
 
     stages {
 
-        stage('Example') {
+        stage('Parameters Example') {
             steps {
-                try {
-                    echo "Test Example"
-                } catch (error) {
-                    throw error
+                echo "Output Parameters"
+                echo "PARAM_STRING=${params.PARAM_STRING}"
+                echo "PARAM_CHOICE=${params.PARAM_CHOICE}"
+                echo "PARAM_CHECKBOX=${params.PARAM_CHECKBOX}"
+            }
+        }
+
+        stage('withEnv Example') {
+            steps {
+                echo 'Run Step With Env'
+                withEnv(['ENV_FIRST=true', 'ENV_SECOND=sqlite']) {
+                    echo "ENV_FIRST=${env.ENV_FIRST}"
+                    echo "ENV_SECOND=${env.ENV_SECOND}"
                 }
             }
         }
 
-        stage('Initialize') {
-            steps {
-                echo 'Initialize...'
-                echo "PERSON=${params.PERSON} BRANCH=${params.BRANCH} CAN_DANCE=${params.CAN_DANCE}"
-
-                withEnv(['DISABLE_AUTH=true', 'DB_ENGINE=sqlite']) {
-                    echo "${env.DB_ENGINE} ${env.DISABLE_AUTH}"
-                    sh 'echo $DB_ENGINE $DISABLE_AUTH'
-                    echo getChangeString()
-                }
-            }
-        }
         stage('Build Develop APK') {
 
             when {
@@ -102,6 +99,7 @@ pipeline {
                 archiveArtifacts(onlyIfSuccessful: true, artifacts: 'app/build/outputs/apk/**/*.apk')
             }
         }
+
         stage('Report') {
             steps {
                 echo 'Report'
