@@ -49,7 +49,9 @@ pipeline {
             }
             steps {
                 echo 'Building Develop APK...'
-                sh './gradlew clean assembleDevDebug'
+                withCredentials([string(credentialsId: 'BETA_SECRET_KEY', variable: 'SECRET_KEY')]) {
+                    sh './gradlew clean assembleDevDebug'
+                }
             }
             post {
                 failure {
@@ -60,17 +62,12 @@ pipeline {
 
         stage('Build Beta APK') {
             when {
-                branch 'master'
+                branch 'beta'
             }
             steps {
                 echo 'Building Beta APK...'
                 withCredentials([string(credentialsId: 'BETA_SECRET_KEY', variable: 'SECRET_KEY')]) {
                     sh './gradlew clean assembleBetaDebug'
-                }
-                post {
-                    failure {
-                        echo "withCredentials Failure!"
-                    }
                 }
             }
         }
