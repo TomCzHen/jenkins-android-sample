@@ -42,6 +42,16 @@ pipeline {
             }
         }
 
+        stage('Try Catch Example') {
+            steps {
+                try {
+                    sh "echo message"
+                } catch (error) {
+                    throw error
+                }
+            }
+        }
+
         stage('Build Develop APK') {
 
             when {
