@@ -114,11 +114,7 @@ pipeline {
                 }
             }
         }
-        stage('Analyze APK') {
-            steps {
 
-            }
-        }
         stage('Upload') {
             steps {
                 echo 'Upload'
