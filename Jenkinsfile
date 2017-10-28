@@ -3,6 +3,10 @@ pipeline {
         label "master"
     }
 
+    options {
+        timestamps()
+    }
+
     stages {
 
         stage("Initialize") {

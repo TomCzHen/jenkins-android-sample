@@ -132,9 +132,40 @@ pipeline {
 
 ### 环境变量
 
-#### 全局环境变量
+可以在 pipeline 和 stage 中声明环境变量：
 
-#### 局部环境变量
+```
+pipeline {
+    ...
+
+    environment {
+        CC = 'clang'
+    }
+
+    stages {
+        ...
+
+        stage('Environment Example') {
+            environment {
+                SECRET_KEY = credentials('a-secret-text')
+            }
+
+            steps {
+                sh 'printenv'
+            }
+        }
+
+        ...
+    }
+
+    ...
+}
+
+```
+
+在 pipeline 顶层中声明的环境变量，整个 Jenkinsfile 都可以使用;在 stage 中声明的环境变量只在 stage 中有效。
+
+还可以使用 withEnv 的方式来声明环境变量，但仅对 `withEnv` 块内的 step 有效：
 
 ```
 pipeline {
