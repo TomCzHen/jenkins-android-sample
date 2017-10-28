@@ -79,6 +79,15 @@ pipeline {
                         archiveUnsignedApks: false
                 )
             }
+            post {
+                failure {
+                    echo "Sign APK Failure!"
+
+                }
+                success {
+                    echo "Sign APK Success!"
+                }
+            }
         }
 
         stage('Upload') {

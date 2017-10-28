@@ -16,6 +16,19 @@
 
 在 Blue Ocean UI 中新建 Pipeline 添加本仓库即可。也可以先 fork 本项目，然后通过 GitHub Token 访问自己的帐号添加项目。
 
+```
+...
+    environment:
+      - ANDROID_HOME=/opt/android-linux-sdk
+      - ANDROID_SDK_HOME=/var/jenkins_home/tmp/android
+      - GRADLE_USER_HOME=/var/jenkins_home/tools/gradle
+...
+```
+
+`ANDROID_HOME` 是 Android SDK 路径，这里是外部 SDK 文件挂载到容器内的路径。
+
+`ANDROID_SDK_HOME` 是 Android 构建中 SDK 产生的临时文件路径，`GRADLE_USER_HOME` 是 Gradle 的路径。默认都是在用户目录下，这里配置到 `jenkins_home` 目录下。
+
 ## Jenkinsfile
 
 > 参考文档：
@@ -26,71 +39,122 @@
 
 > [Pipeline Steps Reference](https://jenkins.io/doc/pipeline/steps/)
 
+Pipeline 分为声明式和脚本式两种模式，这里使用的是声明式脚本，两种模式语法和 API 有些差别。
+
 所有的构建步骤都在 Jenkinsfile 中，不再通过 Web UI 添加，将 CI 也纳入版本控制。
 
 注：Web Hook 仍然需要在 Web UI 中配置，但定时构建可以在 Jenkinsfile 中配置。
 
 ```
-triggers {
-    cron('H 4/* 0 0 1-5')
+pipeline {
+    ...
+
+    triggers {
+        cron('H 4/* 0 0 1-5')
+    }
+
+    ...
 }
 ```
 
 根据分支名作为 Stage 执行的条件：
 
 ```
-when {
-    branch 'prod'
-}
-```
+pipeline {
+    ...
 
-并且加入了平台判断来执行不同的脚本：
+    stages {
+        ...
 
-```
-if (isUnix()) {
-    sh './gradlew clean assembleProd'
-    } else {
-    bat 'gradlew clean assembleProd'
+        stage("When Example") {
+            when {
+                branch 'prod'
+            }
+
+            ...
+        }
+
+    ...
+    }
+
+    ...
 }
 ```
 
 ### 参数输入
 
+构建运行前的参数，手动执行时会提示输入参数，在 Stages 中可以通过 `params.PARAM_NAME` 的方式使用这些参数。
+
 这里参数输入在构建中没有实际的作用，仅仅作为示例，可以根据实际需要修改构建脚本：
 
 ```
-parameters {
-    string(
-            name: 'PERSON',
-            defaultValue: 'Mr Jenkins',
-            description: 'Who should I say hello to?'
+pipeline {
+    ...
 
-    choice(
-            name: 'BRANCH',
-            choices: 'prod\ndev',
-            description: 'Choice Branch'
+    parameters {
+        string(
+                name: 'PARAM_STRING',
+                defaultValue: 'String',
+                description: 'String Parameter'
+        )
 
-    booleanParam(
-            name: 'CAN_DANCE',
-            defaultValue: true,
-            description: 'Checkbox parameter'
-    )
+        choice(
+                name: 'PARAM_CHOICE',
+                choices: '1st\n2nd\n3rd',
+                description: 'Choice Parameter'
+        )
+
+        booleanParam(
+                name: 'PARAM_CHECKBOX',
+                defaultValue: true,
+                description: 'Checkbox Parameter'
+        )
+    }
+
+    stages {
+        ...
+
+        stage('Parameters Example') {
+            steps {
+                echo "Output Parameters"
+                echo "PARAM_STRING=${params.PARAM_STRING}"
+                echo "PARAM_CHOICE=${params.PARAM_CHOICE}"
+                echo "PARAM_CHECKBOX=${params.PARAM_CHECKBOX}"
+            }
+        }
+
+        ...
+    }
+
+    ...
 }
 ```
 
-构建运行前的参数，手动执行时会提示输入参数，在 Stages 中可以通过 `params.PARAM_NAME` 的方式使用这些参数。
+### 环境变量
 
-```gradle
-stage('Initialize') {
-    steps {
-        echo 'Initialize...'
-        echo "PERSON=${params.PERSON} BRANCH=${params.BRANCH} CAN_DANCE=${params.CAN_
-        withEnv(['DISABLE_AUTH=true', 'DB_ENGINE=sqlite']) {
-            echo "${env.DB_ENGINE} ${env.DISABLE_AUTH}"
-            sh 'echo $DB_ENGINE $DISABLE_AUTH'
-            echo getChangeString()
+#### 全局环境变量
+
+#### 局部环境变量
+
+```
+pipeline {
+    ...
+
+    stages {
+        ...
+
+        stage('withEnv Example') {
+            steps {
+                echo 'Run Step With Env'
+                withEnv(['ENV_FIRST=true', 'ENV_SECOND=sqlite']) {
+                    echo "ENV_FIRST=${env.ENV_FIRST}"
+                    echo "ENV_SECOND=${env.ENV_SECOND}"
+                }
+            }
         }
     }
+
+    ...
 }
 ```
 
@@ -104,18 +168,29 @@ stage('Initialize') {
 
 在 Step 中通过 CredentialsID 可以读取 Jenkins 配置的 Credential 密文并赋值到变量 `SECRET_KEY`：
 
-```gradle
-steps {
-    echo 'Building Beta APK...'
-    withCredentials([string(credentialsId: 'BETA_SECRET_KEY', variable: 'SECRET_KEY')]) {
-        script {
-            if (isUnix()) {
-                sh './gradlew clean assembleBetaDebug'
-            } else {
-                bat 'gradlew clean assembleBetaDebug'
+```
+pipeline {
+    ...
+
+    stages {
+        ...
+        stage("Build Beta APK") {
+            steps {
+                echo 'Building Beta APK...'
+                withCredentials([string(credentialsId: 'BETA_SECRET_KEY', variable: 'SECRET_KEY')]) {
+                script {
+                    if (isUnix()) {
+                        sh './gradlew clean assembleBetaDebug'
+                    } else {
+                        bat 'gradlew clean assembleBetaDebug'
+                }
             }
         }
 
+        ...
+    }
+
+    ...
 }
 ```
 
@@ -123,12 +198,8 @@ steps {
 
 ```
 defaultConfig {
-    applicationId "com.example.myfirstapp"
-    minSdkVersion 23
-    targetSdkVersion 26
-    versionCode 1
-    versionName "1.0"
-    testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+    ...
+
     buildConfigField "String", "SECRET_KEY", String.format("\"%s\"", System.getenv("SECRET_KEY") ?: "Develop Secret Key")
 }
 ```
@@ -151,16 +222,30 @@ keytool -importkeystore -srckeystore tomczhen.jks -srcstoretype JKS -deststorety
 
 将转换好的证书上传到 Credentials 中并配置好 ID，本项目中使用了 `ANDROID_SIGN_KEY_STORE` 作为 ID:
 
-```gradle
-steps {
-    echo 'Sign APK'
-    signAndroidApks(
-            keyStoreId: "ANDROID_SIGN_KEY_STORE",
-            keyAlias: "tomczhen",
-            apksToSign: "**/*-prod-release-unsigned.apk",
-            archiveSignedApks: false,
-            archiveUnsignedApks: false
-    )
+```
+pipeline {
+    ...
+
+    stages {
+        ...
+
+        stage("Sign APK") {
+            steps {
+                echo 'Sign APK'
+                signAndroidApks(
+                    keyStoreId: "ANDROID_SIGN_KEY_STORE",
+                    keyAlias: "tomczhen",
+                    apksToSign: "**/*-prod-release-unsigned.apk",
+                    archiveSignedApks: false,
+                    archiveUnsignedApks: false
+                )
+            }
+        }
+
+        ...
+    }
+
+    ...
 }
 ```
 
