@@ -5,10 +5,10 @@ pipeline {
 
         stage("Initialize") {
             steps {
-                withCredentials(
-                        [string(credentialsId: 'BETA_SECRET_KEY', variable: 'SECRET_KEY')],
-                        [string(credentialsId: 'PROD_SECRET_KEY', variable: 'SECRET_KEY')]
-                ) {
+                withCredentials([
+                        string(credentialsId: 'BETA_SECRET_KEY', variable: 'SECRET_KEY'),
+                        string(credentialsId: 'PROD_SECRET_KEY', variable: 'SECRET_KEY')
+                ]) {
                 }
 
             }
