@@ -43,7 +43,7 @@ Pipeline 分为声明式和脚本式两种模式，这里使用的是声明式�
 
 所有的构建步骤都在 Jenkinsfile 中，不再通过 Web UI 添加，将 CI 也纳入版本控制。
 
-注：Web Hook 仍然需要在 Web UI 中配置，但定时构建可以在 Jenkinsfile 中配置。
+可以通过 triggers 来声明定时构建：
 
 ```
 pipeline {
@@ -57,7 +57,7 @@ pipeline {
 }
 ```
 
-根据分支名作为 Stage 执行的条件：
+使用 when 来声明 stage 执行的条件：
 
 ```
 pipeline {
@@ -81,7 +81,7 @@ pipeline {
 }
 ```
 
-### 参数输入
+### 参数
 
 构建运行前的参数，手动执行时会提示输入参数，在 Stages 中可以通过 `params.PARAM_NAME` 的方式使用这些参数。
 
