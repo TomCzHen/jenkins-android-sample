@@ -1,5 +1,7 @@
 pipeline {
-    agent any
+    agent {
+        label "master"
+    }
 
     stages {
 
@@ -20,12 +22,6 @@ pipeline {
                 success {
                     echo "Check Credentials Success!"
                 }
-            }
-        }
-
-        stage('Run Android Lint') {
-            steps {
-                sh './gradlew lint'
             }
         }
 
@@ -86,31 +82,13 @@ pipeline {
                 }
                 success {
                     echo "Build Prod APK Success!"
-                }
-            }
-        }
-
-        stage('Sign Prod APK') {
-            when {
-                branch 'prod'
-            }
-            steps {
-                echo 'Sign APK'
-                signAndroidApks(
-                        keyStoreId: "ANDROID_SIGN_KEY_STORE",
-                        keyAlias: "tomczhen",
-                        apksToSign: "**/*-prod-release-unsigned.apk",
-                        archiveSignedApks: false,
-                        archiveUnsignedApks: false
-                )
-            }
-            post {
-                failure {
-                    echo "Sign APK Failure!"
-
-                }
-                success {
-                    echo "Sign APK Success!"
+                    signAndroidApks(
+                            keyStoreId: "ANDROID_SIGN_KEY_STORE",
+                            keyAlias: "tomczhen",
+                            apksToSign: "**/*-prod-release-unsigned.apk",
+                            archiveSignedApks: false,
+                            archiveUnsignedApks: false
+                    )
                 }
             }
         }
