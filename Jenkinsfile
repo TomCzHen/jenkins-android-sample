@@ -23,6 +23,12 @@ pipeline {
             }
         }
 
+        stage('Run Android Lint') {
+            steps {
+                sh './gradlew lint'
+            }
+        }
+
         stage('Build Develop APK') {
 
             when {
@@ -36,7 +42,10 @@ pipeline {
             }
             post {
                 failure {
-                    echo "Build APK Failure!"
+                    echo "Build Develop APK Failure!"
+                }
+                success {
+                    echo "Build Develop APK Success!"
                 }
             }
         }
@@ -51,6 +60,14 @@ pipeline {
                     sh './gradlew clean assembleBetaDebug'
                 }
             }
+            post {
+                failure {
+                    echo "Build Beta APK Failure!"
+                }
+                success {
+                    echo "Build Beta APK Success!"
+                }
+            }
         }
 
         stage('Build Prod APK') {
@@ -61,6 +78,14 @@ pipeline {
                 echo 'Building Production APK...'
                 withCredentials([string(credentialsId: 'PROD_SECRET_KEY', variable: 'SECRET_KEY')]) {
                     sh './gradlew clean assembleProd'
+                }
+            }
+            post {
+                failure {
+                    echo "Build Prod APK Failure!"
+                }
+                success {
+                    echo "Build Prod APK Success!"
                 }
             }
         }
@@ -89,7 +114,11 @@ pipeline {
                 }
             }
         }
+        stage('Analyze APK') {
+            steps {
 
+            }
+        }
         stage('Upload') {
             steps {
                 echo 'Upload'
@@ -101,27 +130,6 @@ pipeline {
             steps {
                 echo 'Report'
             }
-        }
-    }
-
-    post {
-        always {
-            echo 'Always Echo!'
-        }
-        success {
-            echo 'Build Success!'
-        }
-        failure {
-            echo 'Build Failure!'
-        }
-        changed {
-            echo 'Build Status Changed!'
-        }
-        unstable {
-            echo 'Test Failure!'
-        }
-        aborted {
-            echo 'Build Aborted!'
         }
     }
 }
