@@ -1,36 +1,26 @@
 pipeline {
-    agent any
-
-    parameters {
-        string(
-                name: 'PERSON',
-                defaultValue: 'Mr Jenkins',
-                description: 'Who should I say hello to?'
-        )
-
-        choice(
-                name: 'BRANCH',
-                choices: 'prod\ndev',
-                description: 'Choice Branch'
-        )
-
-        booleanParam(
-                name: 'CAN_DANCE',
-                defaultValue: true,
-                description: 'Checkbox parameter'
-        )
+    agent {
+        label "master"
     }
 
     stages {
-        stage('Initialize') {
-            steps {
-                echo 'Initialize...'
-                echo "PERSON=${params.PERSON} BRANCH=${params.BRANCH} CAN_DANCE=${params.CAN_DANCE}"
 
-                withEnv(['DISABLE_AUTH=true', 'DB_ENGINE=sqlite']) {
-                    echo "${env.DB_ENGINE} ${env.DISABLE_AUTH}"
-                    sh 'echo $DB_ENGINE $DISABLE_AUTH'
-                    echo getChangeString()
+        stage("Initialize") {
+            steps {
+                withCredentials([
+                        string(credentialsId: 'BETA_SECRET_KEY', variable: 'SECRET_KEY'),
+                        string(credentialsId: 'PROD_SECRET_KEY', variable: 'SECRET_KEY')
+                ]) {
+                }
+
+            }
+            post {
+                failure {
+                    echo "Check Credentials Failure, Please Check Credentials Config!"
+
+                }
+                success {
+                    echo "Check Credentials Success!"
                 }
             }
         }
@@ -40,16 +30,18 @@ pipeline {
             when {
                 branch 'master'
             }
-
             steps {
                 echo 'Building Develop APK...'
-
-                script {
-                    if (isUnix()) {
-                        sh './gradlew clean assembleDevDebug'
-                    } else {
-                        bat 'gradlew clean assembleDevDebug'
-                    }
+                withCredentials([string(credentialsId: 'BETA_SECRET_KEY', variable: 'SECRET_KEY')]) {
+                    sh './gradlew clean assembleDevDebug'
+                }
+            }
+            post {
+                failure {
+                    echo "Build Develop APK Failure!"
+                }
+                success {
+                    echo "Build Develop APK Success!"
                 }
             }
         }
@@ -61,15 +53,16 @@ pipeline {
             steps {
                 echo 'Building Beta APK...'
                 withCredentials([string(credentialsId: 'BETA_SECRET_KEY', variable: 'SECRET_KEY')]) {
-                    script {
-                        if (isUnix()) {
-                            sh './gradlew clean assembleBetaDebug'
-                        } else {
-                            bat 'gradlew clean assembleBetaDebug'
-                        }
-                    }
+                    sh './gradlew clean assembleBetaDebug'
                 }
-
+            }
+            post {
+                failure {
+                    echo "Build Beta APK Failure!"
+                }
+                success {
+                    echo "Build Beta APK Success!"
+                }
             }
         }
 
@@ -80,64 +73,37 @@ pipeline {
             steps {
                 echo 'Building Production APK...'
                 withCredentials([string(credentialsId: 'PROD_SECRET_KEY', variable: 'SECRET_KEY')]) {
-                    script {
-                        if (isUnix()) {
-                            sh './gradlew clean assembleProd'
-                        } else {
-                            bat 'gradlew clean assembleProd'
-                        }
-                    }
+                    sh './gradlew clean assembleProd'
                 }
             }
-        }
-
-        stage('Sign Prod APK') {
-            when {
-                branch 'prod'
-            }
-            steps {
-                echo 'Sign APK'
-                signAndroidApks(
-                        keyStoreId: "ANDROID_SIGN_KEY_STORE",
-                        keyAlias: "tomczhen",
-                        apksToSign: "**/*-prod-release-unsigned.apk",
-                        archiveSignedApks: false,
-                        archiveUnsignedApks: false
-                )
+            post {
+                failure {
+                    echo "Build Prod APK Failure!"
+                }
+                success {
+                    echo "Build Prod APK Success!"
+                    signAndroidApks(
+                            keyStoreId: "ANDROID_SIGN_KEY_STORE",
+                            keyAlias: "tomczhen",
+                            apksToSign: "**/*-prod-release-unsigned.apk",
+                            archiveSignedApks: false,
+                            archiveUnsignedApks: false
+                    )
+                }
             }
         }
 
         stage('Upload') {
             steps {
                 echo 'Upload'
-                archiveArtifacts(onlyIfSuccessful: true, artifacts: 'app/build/outputs/apk/*.apk')
+                archiveArtifacts(onlyIfSuccessful: true, artifacts: 'app/build/outputs/apk/**/*.apk')
             }
         }
+
         stage('Report') {
             steps {
                 echo 'Report'
             }
-        }
-    }
-
-    post {
-        always {
-            echo 'Always Echo!'
-        }
-        success {
-            echo 'Build Success!'
-        }
-        failure {
-            echo 'Build Failure!'
-        }
-        changed {
-            echo 'Build Status Changed!'
-        }
-        unstable {
-            echo 'Test Failure!'
-        }
-        aborted {
-            echo 'Build Aborted!'
         }
     }
 }
