@@ -1,43 +1,24 @@
 pipeline {
     agent any
 
-    parameters {
-        string(
-                name: 'PARAM_STRING',
-                defaultValue: 'String',
-                description: 'String Parameter'
-        )
-
-        choice(
-                name: 'PARAM_CHOICE',
-                choices: '1st\n2nd\n3rd',
-                description: 'Choice Parameter'
-        )
-
-        booleanParam(
-                name: 'PARAM_CHECKBOX',
-                defaultValue: true,
-                description: 'Checkbox Parameter'
-        )
-    }
-
     stages {
 
-        stage('Parameters Example') {
+        stage("Initialize") {
             steps {
-                echo "Output Parameters"
-                echo "PARAM_STRING=${params.PARAM_STRING}"
-                echo "PARAM_CHOICE=${params.PARAM_CHOICE}"
-                echo "PARAM_CHECKBOX=${params.PARAM_CHECKBOX}"
-            }
-        }
+                withCredentials(
+                        [string(credentialsId: 'BETA_SECRET_KEY', variable: 'SECRET_KEY')],
+                        [string(credentialsId: 'PROD_SECRET_KEY', variable: 'SECRET_KEY')]
+                ) {
+                }
 
-        stage('withEnv Example') {
-            steps {
-                echo 'Run Step With Env'
-                withEnv(['ENV_FIRST=true', 'ENV_SECOND=sqlite']) {
-                    echo "ENV_FIRST=${env.ENV_FIRST}"
-                    echo "ENV_SECOND=${env.ENV_SECOND}"
+            }
+            post {
+                failure {
+                    echo "Check Credentials Failure, Please Check Credentials Config!"
+
+                }
+                success {
+                    echo "Check Credentials Success!"
                 }
             }
         }
@@ -52,15 +33,10 @@ pipeline {
                 withCredentials([string(credentialsId: 'BETA_SECRET_KEY', variable: 'SECRET_KEY')]) {
                     sh './gradlew clean assembleDevDebug'
                 }
-                post {
-                    failure {
-                        echo "With Failure!"
-                    }
-                }
             }
             post {
                 failure {
-                    echo "Build Failure!"
+                    echo "Build APK Failure!"
                 }
             }
         }
