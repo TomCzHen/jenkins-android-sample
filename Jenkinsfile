@@ -36,7 +36,6 @@ pipeline {
                 branch 'master'
             }
             steps {
-                echo 'Building Develop APK...'
                 withCredentials([string(credentialsId: 'BETA_SECRET_KEY', variable: 'SECRET_KEY')]) {
                     sh './gradlew clean assembleDevDebug'
                 }
@@ -56,7 +55,6 @@ pipeline {
                 branch 'beta'
             }
             steps {
-                echo 'Building Beta APK...'
                 withCredentials([string(credentialsId: 'BETA_SECRET_KEY', variable: 'SECRET_KEY')]) {
                     sh './gradlew clean assembleBetaDebug'
                 }
@@ -76,7 +74,6 @@ pipeline {
                 branch 'prod'
             }
             steps {
-                echo 'Building Production APK...'
                 withCredentials([string(credentialsId: 'PROD_SECRET_KEY', variable: 'SECRET_KEY')]) {
                     sh './gradlew clean assembleProd'
                 }
@@ -86,7 +83,6 @@ pipeline {
                     echo "Build Prod APK Failure!"
                 }
                 success {
-                    echo "Build Prod APK Success!"
                     signAndroidApks(
                             keyStoreId: "ANDROID_SIGN_KEY_STORE",
                             keyAlias: "tomczhen",
@@ -100,7 +96,6 @@ pipeline {
 
         stage('Upload') {
             steps {
-                echo 'Upload'
                 archiveArtifacts(artifacts: 'app/build/outputs/apk/**/*.apk', fingerprint: true, onlyIfSuccessful: true)
             }
             post {
@@ -115,7 +110,6 @@ pipeline {
 
         stage('Report') {
             steps {
-                echo 'Report'
                 echo getChangeString()
             }
         }
