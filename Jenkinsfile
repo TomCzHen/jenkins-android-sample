@@ -4,7 +4,7 @@ pipeline {
     }
 
     options {
-        buildDiscarder(logRotator(numToKeepStr: '5'))
+        buildDiscarder(logRotator(numToKeepStr: '30', daysToKeepStr: '7'))
         timestamps()
     }
 
