@@ -93,21 +93,27 @@ pipeline {
 
     parameters {
         string(
-                name: 'PARAM_STRING',
-                defaultValue: 'String',
-                description: 'String Parameter'
+            name: 'PARAM_STRING',
+            defaultValue: 'String',
+            description: 'String Parameter'
         )
 
         choice(
-                name: 'PARAM_CHOICE',
-                choices: '1st\n2nd\n3rd',
-                description: 'Choice Parameter'
+            name: 'PARAM_CHOICE',
+            choices: '1st\n2nd\n3rd',
+            description: 'Choice Parameter'
         )
 
         booleanParam(
-                name: 'PARAM_CHECKBOX',
-                defaultValue: true,
-                description: 'Checkbox Parameter'
+            name: 'PARAM_CHECKBOX',
+            defaultValue: true,
+            description: 'Checkbox Parameter'
+        )
+
+        text(
+            name: 'PARAM_TEXT'
+            defaultValue: "a-long-text",
+            description: 'Text Parameter'
         )
     }
 
@@ -120,6 +126,7 @@ pipeline {
                 echo "PARAM_STRING=${params.PARAM_STRING}"
                 echo "PARAM_CHOICE=${params.PARAM_CHOICE}"
                 echo "PARAM_CHECKBOX=${params.PARAM_CHECKBOX}"
+                echo "PARAM_TEXT=${params.PARAM_TEXT}"
             }
         }
 
