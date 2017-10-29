@@ -105,10 +105,10 @@ pipeline {
             }
             post {
                 failure {
-
+                    echo "Archive Failure!"
                 }
                 success {
-
+                    echo "Archive Success!"
                 }
             }
         }
