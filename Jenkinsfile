@@ -11,7 +11,6 @@ pipeline {
     parameters {
         text(defaultValue: getChangeString(), description: 'Commit Changes', name: 'CHANGES')
         password(defaultValue: "password", description: "Input Password", name: "PWD")
-        file(description: "Input File", name: "PARAM_FILE")
     }
 
     stages {
