@@ -4,6 +4,7 @@ pipeline {
     }
 
     options {
+        buildDiscarder(logRotator(numToKeepStr: '5'))
         timestamps()
     }
 
@@ -100,7 +101,15 @@ pipeline {
         stage('Upload') {
             steps {
                 echo 'Upload'
-                archiveArtifacts(onlyIfSuccessful: true, artifacts: 'app/build/outputs/apk/**/*.apk')
+                archiveArtifacts(artifacts: 'app/build/outputs/apk/**/*.apk', fingerprint: true, onlyIfSuccessful: true)
+            }
+            post {
+                failure {
+
+                }
+                success {
+
+                }
             }
         }
 
