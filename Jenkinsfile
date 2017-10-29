@@ -8,6 +8,10 @@ pipeline {
         timestamps()
     }
 
+    parameters {
+        text(defaultValue: getChangeString(), description: 'Commit Changes', name: 'CHANGES')
+    }
+
     stages {
 
         stage("Initialize") {
