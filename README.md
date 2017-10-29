@@ -111,10 +111,16 @@ pipeline {
         )
 
         text(
-            name: 'PARAM_TEXT'
-            defaultValue: "a-long-text",
+            name: 'PARAM_TEXT',
+            defaultValue: 'a-long-text',
             description: 'Text Parameter'
         )
+
+        password(
+            name: "PARAM_PASSWORD",
+            defaultValue: 'Password',
+            description: 'Password Parameter'
+            )
     }
 
     stages {
@@ -127,6 +133,7 @@ pipeline {
                 echo "PARAM_CHOICE=${params.PARAM_CHOICE}"
                 echo "PARAM_CHECKBOX=${params.PARAM_CHECKBOX}"
                 echo "PARAM_TEXT=${params.PARAM_TEXT}"
+                echo "PARAM_PASSWORD=${params.PARAM_PASSWORD}
             }
         }
 
