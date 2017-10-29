@@ -10,6 +10,9 @@ pipeline {
 
     parameters {
         text(defaultValue: getChangeString(), description: 'Commit Changes', name: 'CHANGES')
+        password(defaultValue: "password", description: "Input Password", name: "PWD")
+        file(description: "Input File", name: "PARAM_FILE")
+        run(description: "Input Run", name: "PARAM_RUN")
     }
 
     stages {
@@ -130,7 +133,7 @@ def getChangeString() {
     MAX_MSG_LEN = 100
     def changeString = ""
 
-    echo "Gathering SCM changes"
+    echo "Gathering SCM Changes..."
     def changeLogSets = currentBuild.changeSets
     for (int i = 0; i < changeLogSets.size(); i++) {
         def entries = changeLogSets[i].items
@@ -142,7 +145,7 @@ def getChangeString() {
     }
 
     if (!changeString) {
-        changeString = " - No new changes"
+        changeString = " - No Changes -"
     }
     return changeString
 }
