@@ -3,6 +3,11 @@ pipeline {
         label "master"
     }
 
+    options {
+        buildDiscarder(logRotator(numToKeepStr: '30', daysToKeepStr: '7'))
+        timestamps()
+    }
+
     stages {
 
         stage("Initialize") {
@@ -31,7 +36,6 @@ pipeline {
                 branch 'master'
             }
             steps {
-                echo 'Building Develop APK...'
                 withCredentials([string(credentialsId: 'BETA_SECRET_KEY', variable: 'SECRET_KEY')]) {
                     sh './gradlew clean assembleDevDebug'
                 }
@@ -51,7 +55,6 @@ pipeline {
                 branch 'beta'
             }
             steps {
-                echo 'Building Beta APK...'
                 withCredentials([string(credentialsId: 'BETA_SECRET_KEY', variable: 'SECRET_KEY')]) {
                     sh './gradlew clean assembleBetaDebug'
                 }
@@ -71,7 +74,6 @@ pipeline {
                 branch 'prod'
             }
             steps {
-                echo 'Building Production APK...'
                 withCredentials([string(credentialsId: 'PROD_SECRET_KEY', variable: 'SECRET_KEY')]) {
                     sh './gradlew clean assembleProd'
                 }
@@ -81,7 +83,6 @@ pipeline {
                     echo "Build Prod APK Failure!"
                 }
                 success {
-                    echo "Build Prod APK Success!"
                     signAndroidApks(
                             keyStoreId: "ANDROID_SIGN_KEY_STORE",
                             keyAlias: "tomczhen",
@@ -95,14 +96,21 @@ pipeline {
 
         stage('Upload') {
             steps {
-                echo 'Upload'
-                archiveArtifacts(onlyIfSuccessful: true, artifacts: 'app/build/outputs/apk/**/*.apk')
+                archiveArtifacts(artifacts: 'app/build/outputs/apk/**/*.apk', fingerprint: true, onlyIfSuccessful: true)
+            }
+            post {
+                failure {
+                    echo "Archive Failure!"
+                }
+                success {
+                    echo "Archive Success!"
+                }
             }
         }
 
         stage('Report') {
             steps {
-                echo 'Report'
+                echo getChangeString()
             }
         }
     }
@@ -113,7 +121,7 @@ def getChangeString() {
     MAX_MSG_LEN = 100
     def changeString = ""
 
-    echo "Gathering SCM changes"
+    echo "Gathering SCM Changes..."
     def changeLogSets = currentBuild.changeSets
     for (int i = 0; i < changeLogSets.size(); i++) {
         def entries = changeLogSets[i].items
@@ -125,7 +133,7 @@ def getChangeString() {
     }
 
     if (!changeString) {
-        changeString = " - No new changes"
+        changeString = " - No Changes -"
     }
     return changeString
 }

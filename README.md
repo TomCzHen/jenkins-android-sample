@@ -43,7 +43,7 @@ Pipeline 分为声明式和脚本式两种模式，这里使用的是声明式�
 
 所有的构建步骤都在 Jenkinsfile 中，不再通过 Web UI 添加，将 CI 也纳入版本控制。
 
-注：Web Hook 仍然需要在 Web UI 中配置，但定时构建可以在 Jenkinsfile 中配置。
+可以通过 triggers 来声明定时构建：
 
 ```
 pipeline {
@@ -57,7 +57,7 @@ pipeline {
 }
 ```
 
-根据分支名作为 Stage 执行的条件：
+使用 when 来声明 stage 执行的条件：
 
 ```
 pipeline {
@@ -81,7 +81,7 @@ pipeline {
 }
 ```
 
-### 参数输入
+### 参数
 
 构建运行前的参数，手动执行时会提示输入参数，在 Stages 中可以通过 `params.PARAM_NAME` 的方式使用这些参数。
 
@@ -93,22 +93,34 @@ pipeline {
 
     parameters {
         string(
-                name: 'PARAM_STRING',
-                defaultValue: 'String',
-                description: 'String Parameter'
+            name: 'PARAM_STRING',
+            defaultValue: 'String',
+            description: 'String Parameter'
         )
 
         choice(
-                name: 'PARAM_CHOICE',
-                choices: '1st\n2nd\n3rd',
-                description: 'Choice Parameter'
+            name: 'PARAM_CHOICE',
+            choices: '1st\n2nd\n3rd',
+            description: 'Choice Parameter'
         )
 
         booleanParam(
-                name: 'PARAM_CHECKBOX',
-                defaultValue: true,
-                description: 'Checkbox Parameter'
+            name: 'PARAM_CHECKBOX',
+            defaultValue: true,
+            description: 'Checkbox Parameter'
         )
+
+        text(
+            name: 'PARAM_TEXT',
+            defaultValue: 'a-long-text',
+            description: 'Text Parameter'
+        )
+
+        password(
+            name: "PARAM_PASSWORD",
+            defaultValue: 'Password',
+            description: 'Password Parameter'
+            )
     }
 
     stages {
@@ -120,6 +132,8 @@ pipeline {
                 echo "PARAM_STRING=${params.PARAM_STRING}"
                 echo "PARAM_CHOICE=${params.PARAM_CHOICE}"
                 echo "PARAM_CHECKBOX=${params.PARAM_CHECKBOX}"
+                echo "PARAM_TEXT=${params.PARAM_TEXT}"
+                echo "PARAM_PASSWORD=${params.PARAM_PASSWORD}
             }
         }
 
@@ -132,9 +146,40 @@ pipeline {
 
 ### 环境变量
 
-#### 全局环境变量
+可以在 pipeline 和 stage 中声明环境变量：
 
-#### 局部环境变量
+```
+pipeline {
+    ...
+
+    environment {
+        CC = 'clang'
+    }
+
+    stages {
+        ...
+
+        stage('Environment Example') {
+            environment {
+                SECRET_KEY = credentials('a-secret-text')
+            }
+
+            steps {
+                sh 'printenv'
+            }
+        }
+
+        ...
+    }
+
+    ...
+}
+
+```
+
+在 pipeline 顶层中声明的环境变量，整个 Jenkinsfile 都可以使用;在 stage 中声明的环境变量只在 stage 中有效。
+
+还可以使用 withEnv 的方式来声明环境变量，但仅对 `withEnv` 块内的 step 有效：
 
 ```
 pipeline {
